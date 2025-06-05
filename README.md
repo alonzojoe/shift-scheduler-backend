@@ -59,11 +59,10 @@ http://localhost:3000/test
 
 - **POST**  
   Create a new shift.  
-  Payload:
-  ```json
-  {
-    "start": "ISO8601 datetime string",
-    "end": "ISO8601 datetime string",
-    "timezone": "Optional timezone string (if applicable)"
-  }
-  ```
+  Payload: start,end,duration
+- **PUT** /:id  
+  Update shift data.  
+  Payload: start,end,duration
+
+- **DELETE** /:id  
+  DELETE shift data.
