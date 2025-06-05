@@ -1,0 +1,15 @@
+{
+  "name": "shift-scheduler-backend",
+  "version": "1.0.0",
+  "description": "shift-scheduler-backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Joenell Alonzo",
+  "license": "ISC",
+  "dependencies": {
+    "shift-scheduler-backend": "file:"
+  }
+}
