@@ -8,7 +8,7 @@ const shiftsCollection = db.collection("shifts");
 
 router.get("/", async (req, res) => {
   try {
-    const timezone = req.query.timezone || "UTC";
+    const timezone = req.query.timezone;
 
     const shifts = await shiftsCollection.orderBy("start").get();
 
@@ -16,6 +16,8 @@ router.get("/", async (req, res) => {
       const data = doc.data();
       return {
         id: doc.id,
+        rawStart: data.start,
+        rawEnd: data.end,
         start: moment
           .utc(data.start)
           .tz(timezone)
@@ -33,33 +35,40 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const { start, end } = req.body;
-    if (!start || !end) {
+    const { start, end, timezone } = req.body;
+
+    if (!start || !end || !timezone) {
       return res
         .status(400)
-        .json({ error: "Start and end datetime are required!" });
+        .json({ error: "Start, end datetime and timezone are required!" });
     }
+
+    const utcStart = moment.tz(start, timezone).utc().toISOString();
+    const utcEnd = moment.tz(end, timezone).utc().toISOString();
 
     const shifts = await shiftsCollection.get();
     const existingShifts = shifts.docs.map((doc) => doc.data());
 
-    const errorMessage = validateShift({ start, end }, existingShifts);
+    const errorMessage = validateShift(
+      { start: utcStart, end: utcEnd },
+      existingShifts
+    );
 
     if (errorMessage) {
       return res.status(400).json({ error: errorMessage });
     }
 
-    const duration = moment(end).diff(moment(start), "hours", true);
+    const duration = moment(utcEnd).diff(moment(utcStart), "hours", true);
 
     const newShift = await shiftsCollection.add({
-      start,
-      end,
+      start: utcStart,
+      end: utcEnd,
       duration,
     });
 
     res.status(201).json({
       message: "Shift created successfully",
-      data: { id: newShift.id, start, end, duration },
+      data: { id: newShift.id, start: utcStart, end: utcEnd, duration },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -69,28 +78,36 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { start, end } = req.body;
+    const { start, end, timezone } = req.body;
 
-    if (!start || !end) {
+    if (!start || !end || !timezone) {
       return res
         .status(400)
-        .json({ error: "Start and end datetime are required!" });
+        .json({ error: "Start, end datetime and timezone are required!" });
     }
+
+    const utcStart = moment.tz(start, timezone).utc().toISOString();
+    const utcEnd = moment.tz(end, timezone).utc().toISOString();
 
     const shifts = await shiftsCollection.get();
     const existingShifts = shifts.docs
       .filter((doc) => doc.id !== id)
       .map((doc) => doc.data());
 
-    const errorMessage = validateShift({ start, end }, existingShifts);
+    const errorMessage = validateShift(
+      { start: utcStart, end: utcEnd },
+      existingShifts
+    );
 
     if (errorMessage) {
       return res.status(400).json({ error: errorMessage });
     }
 
-    const duration = moment(end).diff(moment(start), "hours", true);
+    const duration = moment(utcEnd).diff(moment(utcStart), "hours", true);
 
-    await shiftsCollection.doc(id).update({ start, end, duration });
+    await shiftsCollection
+      .doc(id)
+      .update({ start: utcStart, end: utcEnd, duration });
 
     const updatedShift = await shiftsCollection.doc(id).get();
 
