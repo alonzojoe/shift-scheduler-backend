@@ -6,26 +6,21 @@ const validateShift = require("../utils/libs");
 
 const shiftsCollection = db.collection("shifts");
 
-let timezone = "UTC";
-
-(async () => {
-  const settingsDoc = await db.collection("settings").doc("timezone").get();
-  if (settingsDoc.exists && settingsDoc.data().timezone) {
-    timezone = settingsDoc.data().timezone;
-    console.log("Timezone loaded:", timezone);
-  }
-})();
-
 router.get("/", async (req, res) => {
   try {
+    const timezone = req.query.timezone || "UTC";
+
     const shifts = await shiftsCollection.orderBy("start").get();
 
     const shiftsData = shifts.docs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
-        start: moment.utc(data.start).tz(timezone).format(),
-        end: moment.utc(data.end).tz(timezone).format(),
+        start: moment
+          .utc(data.start)
+          .tz(timezone)
+          .format("MMMM D, YYYY — hh:mm A"),
+        end: moment.utc(data.end).tz(timezone).format("MMMM D, YYYY — hh:mm A"),
         duration: data.duration,
       };
     });
