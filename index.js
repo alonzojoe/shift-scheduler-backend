@@ -1,10 +1,16 @@
 const express = require("express");
+const cors = require("cors");
 const timezoneRoutes = require("./routes/timezone");
 const shiftsRoutes = require("./routes/shifts");
 
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+  })
+);
 
 app.get("/api/test", (_, res) => {
   res.send({
