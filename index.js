@@ -6,7 +6,7 @@ app.use(express.json());
 
 app.get("/test", (_, res) => {
   res.send({
-    message: "Hello World",
+    message: "API endpoint /test works!",
   });
 });
 
