@@ -56,4 +56,52 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { start, end } = req.body;
+
+    if (!start || !end) {
+      return res
+        .status(400)
+        .json({ error: "Start and end datetime are required!" });
+    }
+
+    const shifts = await shiftsCollection.get();
+    const existingShifts = shifts.docs
+      .filter((doc) => doc.id !== id)
+      .map((doc) => doc.data());
+
+    const errorMessage = validateShift({ start, end }, existingShifts);
+
+    if (errorMessage) {
+      return res.status(400).json({ error: errorMessage });
+    }
+
+    const duration = moment(end).diff(moment(start), "hours", true);
+
+    await shiftsCollection.doc(id).update({ start, end, duration });
+
+    const updatedShift = await shiftsCollection.doc(id).get();
+
+    res.status(200).json({
+      message: "Shift updated successfully",
+      data: updatedShift.data(),
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await shiftsCollection.doc(id).delete();
+    res.status(200).json({ message: "Shift deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
