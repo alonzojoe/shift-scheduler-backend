@@ -4,11 +4,9 @@
 
 This is the backend API for the Shift Scheduler application, built with Node.js and Express. It manages shift data with timezone-aware handling by storing all timestamps in UTC and converting them dynamically based on client-provided timezones. The API supports full CRUD operations on shifts and maintains a configurable global timezone setting.
 
-The backend ensures consistent shift scheduling across different timezones without requiring mass updates when the timezone changes.
-
 ## 🔧 Installation & Setup
 
-### 1️⃣ Clone the Repository
+### Clone the Repository
 
 Start by cloning the project:
 
@@ -32,6 +30,23 @@ Run the command below
 ```bash
 npm start
 ```
+
+### Firebase Emulator Setup (makesure you have firebase -tools installed)
+
+Run the command below
+
+```bash
+firebase init emulators
+//start emulator
+firebase emulators:start --only firestore --project=fc-itw-joenell
+```
+
+### Verify Emulator Access the UI at:
+
+```bash
+http://localhost:4000/firestore
+```
+Create new collection settings DocumentID -> timezone and default timezone type string value Asia/Manila
 
 ### Preview the project in POSTMAN:
 
@@ -59,10 +74,10 @@ http://localhost:3000/test
 
 - **POST**  
   Create a new shift.  
-  Payload: start,end,duration
+  Payload: start,end (duration automatically computed)
 - **PUT** /:id  
   Update shift data.  
-  Payload: start,end,duration
+  Payload: start,end (duration automatically computed)
 
 - **DELETE** /:id  
   DELETE shift data.
