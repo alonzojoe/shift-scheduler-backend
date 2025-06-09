@@ -83,3 +83,41 @@ http://localhost:3000/api/test
 
 - **DELETE** /:id  
   DELETE shift data.
+
+### Deployment
+
+A Dockerfile has already been set up in the root folder of the project, including:
+
+```bash
+FROM node:18
+
+
+WORKDIR /usr/src/app
+
+
+COPY package*.json ./
+
+
+RUN npm install
+
+
+COPY . .
+
+
+ENV PORT=8080
+ENV NODE_ENV=production
+
+
+EXPOSE 8080
+
+
+CMD ["npm", "start"]
+```
+
+### Uploading to Google Cloud Run
+
+Replace the project name based on your preference, then deploy the application using the following command:
+
+```bash
+gcloud run deploy node-backend --source . --region us-central1 --project fc-itw-joenell --platform managed --allow-unauthenticated
+```
