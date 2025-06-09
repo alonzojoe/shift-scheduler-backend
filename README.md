@@ -114,7 +114,7 @@ EXPOSE 8080
 CMD ["npm", "start"]
 ```
 
-### Uploading to Google Cloud Run
+### Uploading to Google Cloud Run (Make sure you have set up the Google Cloud SDK on your device)
 
 Replace the project name based on your preference, then deploy the application using the following command:
 
