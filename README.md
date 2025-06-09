@@ -121,3 +121,9 @@ Replace the project name based on your preference, then deploy the application u
 ```bash
 gcloud run deploy node-backend --source . --region us-central1 --project fc-itw-joenell --platform managed --allow-unauthenticated
 ```
+
+Wait for the upload to finish—it will then generate the service URL for the API endpoint:
+
+```bash
+https://node-backend-178551843876.us-central1.run.app
+```
