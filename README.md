@@ -47,12 +47,13 @@ firebase emulators:start --only firestore --project=fc-itw-joenell
 http://localhost:4000/firestore
 ```
 
-Create new collection settings DocumentID -> timezone and default timezone type string value Asia/Manila
+Create new collection `settings` DocumentID -> `timezone` and default `timezone` type `string` value `Asia/Manila` for default timezone
 
 ### Preview the project in POSTMAN:
 
 ```bash
-http://localhost:3000/test
+http://localhost:3000/api/test
+//will return response { "message": "API endpoint test!" }
 ```
 
 ## API Routes
@@ -61,7 +62,7 @@ http://localhost:3000/test
 
 - **GET**  
   Retrieve the current configured timezone.  
-  Required query parameter: `timezone` to specify a timezone override.
+  Required query parameter: `timezone` to specify a timezone.
 
 - **PUT**  
   Update the current global timezone setting.  
@@ -82,3 +83,47 @@ http://localhost:3000/test
 
 - **DELETE** /:id  
   DELETE shift data.
+
+### Deployment
+
+A Dockerfile has already been set up in the root folder of the project, including:
+
+```bash
+FROM node:18
+
+
+WORKDIR /usr/src/app
+
+
+COPY package*.json ./
+
+
+RUN npm install
+
+
+COPY . .
+
+
+ENV PORT=8080
+ENV NODE_ENV=production
+
+
+EXPOSE 8080
+
+
+CMD ["npm", "start"]
+```
+
+### Uploading to Google Cloud Run
+
+Replace the project name based on your preference, then deploy the application using the following command:
+
+```bash
+gcloud run deploy node-backend --source . --region us-central1 --project fc-itw-joenell --platform managed --allow-unauthenticated
+```
+
+Wait for the upload to finish—it will then generate the service URL for the API endpoint:
+
+```bash
+https://node-backend-178551843876.us-central1.run.app
+```
