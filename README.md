@@ -47,12 +47,13 @@ firebase emulators:start --only firestore --project=fc-itw-joenell
 http://localhost:4000/firestore
 ```
 
-Create new collection settings DocumentID -> timezone and default timezone type string value Asia/Manila
+Create new collection `settings` DocumentID -> `timezone` and default `timezone` type `string` value `Asia/Manila` for default timezone
 
 ### Preview the project in POSTMAN:
 
 ```bash
-http://localhost:3000/test
+http://localhost:3000/api/test
+//will return response { "message": "API endpoint test!" }
 ```
 
 ## API Routes
@@ -61,7 +62,7 @@ http://localhost:3000/test
 
 - **GET**  
   Retrieve the current configured timezone.  
-  Required query parameter: `timezone` to specify a timezone override.
+  Required query parameter: `timezone` to specify a timezone.
 
 - **PUT**  
   Update the current global timezone setting.  
